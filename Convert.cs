@@ -50,8 +50,21 @@ class Convert
                 }
             }
         }
+    }
 
-        Console.WriteLine(string.Join(Environment.NewLine,_luaBuilder));
+    private void Print()
+    {
+        Console.WriteLine(string.Join(Environment.NewLine, _luaBuilder));
+    }
+
+    private void Save2File(string outPath)
+    {
+        var encoding = new UTF8Encoding(false);
+        File.WriteAllText(outPath, string.Join(Environment.NewLine, _luaBuilder), encoding);
+    }
+
+    private void Dispose()
+    {
         _luaBuilder.Clear();
     }
 
@@ -152,12 +165,27 @@ class Convert
 
             if (Directory.Exists(inPath))
             {
-                Console.WriteLine("Directory");
+                var converter = new Convert();
+                var dirName = $"{AppContext.BaseDirectory}\\TableOut\\";
+                if (Directory.Exists(dirName))
+                {
+                    Directory.Delete(dirName,true);
+                }
+                Directory.CreateDirectory(dirName);
+
+                foreach (var fileName in Directory.GetFiles(inPath))
+                {
+                    var outPath = $"{dirName}{Path.GetFileNameWithoutExtension(fileName).Replace(" ", "")}.lua.txt";
+                    converter.ReadFile(fileName, targetTable);
+                    converter.Save2File(outPath);
+                    converter.Dispose();
+                }
             }
             else
             {
                 var converter = new Convert();
                 converter.ReadFile(inPath, targetTable);
+                converter.Dispose();
             }
         }
         else
@@ -167,14 +195,12 @@ class Convert
             {
                 inPath = inPath.Replace("\"", "");
 
-                if (Directory.Exists(inPath))
-                {
-                    Console.WriteLine("Directory");
-                }
-                else
+                if (File.Exists(inPath))
                 {
                     var converter = new Convert();
                     converter.ReadFile(inPath);
+                    converter.Print();
+                    converter.Dispose();
                 }
             }
         }
