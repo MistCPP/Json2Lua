@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json2Lua", "Json2Lua.csproj", "{FAD73EED-8A92-4D4B-9602-CD04496C4ADA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FAD73EED-8A92-4D4B-9602-CD04496C4ADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAD73EED-8A92-4D4B-9602-CD04496C4ADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD73EED-8A92-4D4B-9602-CD04496C4ADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD73EED-8A92-4D4B-9602-CD04496C4ADA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {67F6A2B5-7C38-426B-A340-6015BAFFC8E7}
+	EndGlobalSection
+EndGlobal
