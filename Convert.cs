@@ -97,20 +97,28 @@ class Convert
         }
         else if (token is JArray array)
         {
-            var idx = 0;
-
             foreach (var item in array)
             {
-                if (needPrint)
+                var tryParseResult = TryConvertToBaseTypeLuaStr(item);
+                if (!string.IsNullOrEmpty(tryParseResult))
                 {
-                    _luaBuilder.Add($"{intentStr}{{");
+                    if (needPrint)
+                    {
+                        _luaBuilder.Add($"{intentStr}{tryParseResult},");
+                    }
                 }
-                TraverseJToken(item, indent + (needPrint ? 1 : 0), needPrint);
-                if (needPrint)
+                else
                 {
-                    _luaBuilder.Add($"{intentStr}}},");
+                    if (needPrint)
+                    {
+                        _luaBuilder.Add($"{intentStr}{{");
+                    }
+                    TraverseJToken(item, indent + (needPrint ? 1 : 0), needPrint);
+                    if (needPrint)
+                    {
+                        _luaBuilder.Add($"{intentStr}}},");
+                    }
                 }
-                ++idx;
             }
         }
     }
