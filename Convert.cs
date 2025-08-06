@@ -33,7 +33,7 @@ class Convert
         var jsonContent = JObject.Parse(fileContent);
 
         _luaBuilder.Add($"Table.Levels.{_tableName} = {{");
-        TraverseJToken(jsonContent, 0);
+        TraverseJToken(jsonContent, 0 , _isStartOut);
         _luaBuilder.Add("}");
 
         //=> just once
@@ -68,32 +68,28 @@ class Convert
         _luaBuilder.Clear();
     }
 
-    private void TraverseJToken(JToken token, int indent)
+    private void TraverseJToken(JToken token, int indent,bool needPrint)
     {
-        var breakFlag = false;
         var intentStr = new string('\t', indent);
         if (token is JObject obj)
         {
             foreach (var property in obj.Properties())
             {
-                var isFirst = _isStartOut;
-                _isStartOut = _isStartOut || property.Name == _targetDicName;
-                breakFlag = breakFlag || (!isFirst && _isStartOut);
-
+                var currPropertyNeedPrint = needPrint || property.Name == _targetDicName;
                 var tryParseResult = TryConvertToBaseTypeLuaStr(property.Value);
                 if (string.IsNullOrEmpty(tryParseResult))
                 {
-                    if (_isStartOut && !breakFlag)
+                    if (needPrint)
                     {
                         _luaBuilder.Add($"{intentStr}{FormatPropertyName(property.Name)} = {{");
                     }
-                    TraverseJToken(property.Value, indent + (_isStartOut ? 1 : 0));
-                    if (_isStartOut && !breakFlag)
+                    TraverseJToken(property.Value, indent + (currPropertyNeedPrint ? 1 : 0), currPropertyNeedPrint);
+                    if (needPrint)
                     {
                         _luaBuilder.Add($"{intentStr}}},");
                     }
                 }
-                else if (_isStartOut && !breakFlag)
+                else if (needPrint)
                 {
                     _luaBuilder.Add($"{intentStr}{FormatPropertyName(property.Name)} = {tryParseResult},");   
                 }
@@ -105,12 +101,12 @@ class Convert
 
             foreach (var item in array)
             {
-                if (_isStartOut && !breakFlag)
+                if (needPrint)
                 {
                     _luaBuilder.Add($"{intentStr}{{");
                 }
-                TraverseJToken(item, indent + (_isStartOut ? 1 : 0));
-                if (_isStartOut && !breakFlag)
+                TraverseJToken(item, indent + (needPrint ? 1 : 0), needPrint);
+                if (needPrint)
                 {
                     _luaBuilder.Add($"{intentStr}}},");
                 }
@@ -185,6 +181,7 @@ class Convert
             {
                 var converter = new Convert();
                 converter.ReadFile(inPath, targetTable);
+                converter.Print();
                 converter.Dispose();
             }
         }
@@ -201,6 +198,10 @@ class Convert
                     converter.ReadFile(inPath);
                     converter.Print();
                     converter.Dispose();
+                }
+                else
+                {
+                    Console.WriteLine($"File not found: {inPath}");
                 }
             }
         }
