@@ -11,6 +11,14 @@ class Convert
     private bool _isStartOut;
     private readonly List<string> _luaBuilder = new();
 
+    private readonly static Dictionary<string, string> _specialConvert = new Dictionary<string, string>
+    {
+        ["m_x"] = "x",
+        ["m_y"] = "y",
+        ["m_X"] = "x",
+        ["m_Y"] = "y",
+    };
+
     private void ReadFile(string inPath)
     {
         _isStartOut = true;
@@ -32,7 +40,7 @@ class Convert
         var fileContent = File.ReadAllText(fileName);
         var jsonContent = JObject.Parse(fileContent);
 
-        _luaBuilder.Add($"Table.Levels.{_tableName} = {{");
+        _luaBuilder.Add($"TableLevels.{_tableName} = {{");
         TraverseJToken(jsonContent, 0 , _isStartOut);
         _luaBuilder.Add("}");
 
@@ -125,6 +133,10 @@ class Convert
 
     private string FormatPropertyName(string strName)
     {
+        if (_specialConvert.TryGetValue(strName,out var str))
+        {
+            return str;
+        }
         return strName.StartsWith("_") ? strName[1..] : strName;
     }
 
